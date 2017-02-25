@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- <link href="assets/ratchet/css/ratchet.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="assets/materialize/css/materialize.css">
+    <link href="assets/css/styles.css" rel="stylesheet">
+    <link href="assets/css/pageslider-fix.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name = "format-detection" content = "telephone=no">
+</head>
+<body>
+  
+<!-- mohammed@ruecker.ca -->
+<!-- danial_cronin@steuber.ca -->
+<!-- frederique.kautzer@thiel.biz -->
+
+<script id="log-in-tpl" type="text/template">
+  <div class="progress hidden">
+    <div class="indeterminate"></div>
+  </div>
+
+  <div class="row valign-wrapper">
+    <div class="col s12 valign">
+      <div class="row">
+        <div class="input-field col s12">
+          <input placeholder="" id="email-field" type="text" class="validate" >
+          <label for="email-field">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input placeholder="" id="password-field" type="password" class="validate" value="12345678">
+          <label for="password-field">Password</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <a class="waves-effect waves-light btn">Enter</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="coordinator-menu-tpl" type="text/template">
+  <nav>
+
+    <ul id="slide-out" class="side-nav">
+      <li><a href="#users/{{id}}/edit">Account</a></li>
+      <li><a href="#">Log Out</a></li>
+    </ul>
+
+    <div class="nav-wrapper">
+        <a href="#reservations/" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a
+        <a href="reservations" class="brand-logo">Reservations</a>
+        <a href="#representatives"><i class="material-icons right">supervisor_account</i></a>
+    </div>
+
+    <div class="progress hidden">
+      <div class="indeterminate"></div>
+    </div>
+  </nav>
+
+  <input type="date" class="datepicker">
+
+  <div class="content"></div>
+
+  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a href="#reservations/create" class="btn-floating btn-large red add-rep-btn">
+      <i class="large material-icons">add</i>
+    </a>
+  </div>
+</script>
+
+<script id="administrator-menu-tpl" type="text/template">
+  <nav>
+    <ul id="slide-out" class="side-nav">
+      <li><a href="#users/{{id}}/edit">Account</a></li>
+      {{#if isSuper}}
+        <li><a href="#administrator/super">Users</a></li>
+        <li><a href="#administrator/super/finance">Finance</a></li>
+      {{/if}}
+      <li><a href="#">Log Out</a></li>
+    </ul>
+    <div class="nav-wrapper">
+      <a href="#administrator" class="brand-logo">Reservations</a>
+          <a href="#administrator/map"><i class="material-icons right">location_on</i></a>
+          <a href="#administrator/" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a
+    </div>
+    <div class="progress">
+      <div class="indeterminate"></div>
+    </div>
+  </nav>
+
+  <input type="date" class="datepicker">
+
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3" data-tab-id="pendingTab"><a>Pending</a></li>
+        <li class="tab col s3" data-tab-id="acceptedTab"><a>Accepted</a></li>
+        <li class="tab col s3" data-tab-id="servicesTab"><a class="active">Tables</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="pendingTab" class="col s12 hidden tab-data"></div>
+  <div id="acceptedTab" class="col s12 hidden tab-data"></div>
+  <div id="servicesTab" class="col s12  tab-data"></div>
+  <div class="col s12  tab-data separator"></div>
+
+  <!-- Set service ammount Modal -->
+  <div id="service-ammount-modal" class="modal">
+    <div class="modal-content">
+      <h4>Set Amount</h4>
+      <div class="input-field">
+        <input id="service-ammount" type="text" pattern="[0-9]+(\.|\,)?[0-9]+" data-error="Not a number">
+        <label for="service-ammount">Ammount: $</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class=" modal-action modal-close waves-effect waves-green btn-flat" id="ammount-submit-btn">Submit</div>
+    </div>
+  </div>
+</script>
+
+<script id="reservations-list-tpl" type="text/template">
+  <ul class="collapsible popout" data-collapsible="accordion">
+    {{#each reservations}}
+    <li {{showPending status}}>
+      <div class="collapsible-header truncate">
+        {{ client }} <span class="grayText">{{ coordinator_name }} </span>
+        {{reservationIcon status}}
+        {{#if ../isAdmin}}  {{visibilityIcon this}} {{else}} {{ tableNumberHelper table_number }} {{/if}}
+      </div>
+      <div class="collapsible-body" data-reservation-id="{{id}}">
+        <div class="row">
+          <form class="col s12">
+            <div class="row">
+
+              <div class="input-field col s12">
+                <i class="material-icons prefix">account_circle</i>
+                <input disabled id="icon_prefix" type="text" class="validate" value="{{ client }} ">
+                <label class="active" for="icon_prefix">Client</label>
+              </div>
+
+              <div class="input-field col s12">
+                <i class="material-icons prefix">perm_identity</i>
+                <input disabled id="icon_prefix" type="text" class="validate" value="{{ coordinator_name }} ">
+                <label class="active" for="icon_prefix">Coordinator</label>
+              </div>
+
+              <div class="input-field col s12">
+                <i class="material-icons prefix">person_pin</i>
+                <input disabled id="icon_rp" type="text" class="validate" value="{{representative_name}}">
+                <label class="active" for="icon_rp">Representative</label>
+              </div>
+
+              <div class="input-field col s6">
+                <input disabled type="number" class="validate" id="icon_quantity" min="1" max="15" value="{{quantity }}">
+                  <label class="active" for="icon_quantity"># People </label>
+                </input>
+              </div>
+
+              {{#if ../isAdmin}}
+                <div class="input-field col s6">
+                  <input {{disableIfAccepted status }} type="number" class="validate tableNumber" id="tableNumber" value="{{table_number}}" data-reservation-id="{{id}}">
+                  <label class="active" for="tableNumber" data-reservation-id="{{id}}">Table</label>
+                </div>
+              {{/if}}
+
+              <div class="input-field col s6">
+                <input disabled type="date" class="datepicker" id="date" value="{{dateParser date}}">
+                <label class="active" for="date">Date</label>
+              </div>
+
+
+              <div class="row">
+                <div class="input-field col s12">
+                <i class="material-icons prefix">message</i>
+                  <textarea disabled id="comment-textarea" class="materialize-textarea" value="">
+                    {{comment}}
+                  </textarea>
+                  <label for="comment-textarea">Comment</label>
+                </div>
+              </div>
+
+              {{#if ../isAdmin}}
+                  <div class="row">
+                    <div class="btn waves-effect waves-light {{reservationStatusHelper status}}" type="submit" name="action" data-reservation-id="{{ id }}">{{reservationStatusTextHelper status}}
+                      <i class="material-icons right">send</i>
+                    </div>
+
+                    {{rejectButtonHelper this}}
+
+                  </div>
+              {{ else }}
+                  <div class="delete-res-btn btn waves-effect waves-light red" type="submit" name="action" data-reservation-status="{{status}}" data-reservation-id="{{ id }}">Delete
+                    <i class="material-icons right">send</i>
+                  </div>
+              {{/if}}
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+</script>
+
+<script id="create-reservation-tpl" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="#reservations" class="breadcrumb">Menu</a>
+        <a href="#reservations/create" class="breadcrumb">Create Reservation</a>
+      </div>
+    </div>
+      <div class="progress hidden">
+        <div class="indeterminate"></div>
+      </div>
+  </nav>
+
+ <div class="row">
+    <form class="col s12">
+      <div class="row">          
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">account_circle</i>
+          <input id="client-name" type="text" class="validate">
+          <label for="client-name">Client Name</label>
+        </div>
+
+        <div class="input-field col s12">
+          <select class="browser-default">
+            <option value="" disabled selected>Representative</option>
+              {{#each this}}
+                <option value="{{ id }}">{{ name }}</option>
+              {{/each}}
+          </select>
+        </div>
+
+        <div class="input-field col s4 offset-s2">
+          <input type="number" class="validate" id="quantity" min="1" data-error="Numbers only">
+            <label for="quantity"># People</label>
+          </input>
+        </div>
+
+        <div class="input-field col s6">
+          <input type="date" class="datepicker" id="date" data-error="Not a date">
+          <label for="date" class="">Date</label>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s12">
+          <i class="material-icons prefix">message</i>
+            <textarea id="comment" class="materialize-textarea"></textarea>
+            <label for="comment">Comment</label>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <button class="btn waves-effect waves-light" >Submit
+      <i class="material-icons right">send</i>
+    </button>
+  </div>
+</script>
+
+<script id="services-list-tpl" type="text/template">
+  <ul class="collapsible popout" data-collapsible="accordion">
+      {{#each this}}
+        {{{tableHelper this}}}
+      {{/each}}
+  </ul>
+
+    <ul class="collapsible popout" data-collapsible="accordion">
+    <div class="section header">Completed</div>
+    {{#each this}}
+        {{#each services}}
+              {{{serviceHelper this}}}
+        {{/each}}
+      {{/each}}
+    </ul>
+</script>
+
+<script id="table-choose-modal-tpl" type="text/applicaiton">
+  <!-- Modal Structure -->
+    <div id="chooseTableModal" class="modal">
+      <div class="modal-content">
+        <h4>Choose a Table</h4>
+        {{#each this }}
+          <div class="table-option btn-floating btn-small waves-effect waves-light {{#if services}} red {{else}} blue {{/if}}" data-table-number="{{ number }}"> {{ number }} </div>
+        {{/each }}
+      </div>
+      <div class="modal-footer">
+        <div class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</div>
+      </div>
+    </div>
+</script>
+
+<script id="service-collapsible-li-tpl" type="text/template">
+  <li>
+     <div class="collapsible-header truncate {{#if ammount}} finished {{/if}} {{serviceStatusColor status}}">{{ table_number }}  {{ client }}{{serviceIcon this}}</div>
+     <div class="collapsible-body">
+       <div class="row">
+          <form class="col s12">
+            <div class="row">
+
+              <div class="input-field col s12">
+                <i class="material-icons prefix">account_circle</i>
+                <input disabled id="icon_prefix" type="text" class="validate" value="{{ client }}">
+                <label class="active" for="icon_prefix">First Name</label>
+              </div>
+
+              <div class="input-field col s12">
+                <i class="material-icons prefix">perm_identity</i>
+                <input disabled id="icon_prefix" type="text" class="validate" value="{{ coordinator_name }} ">
+                <label class="active" for="icon_prefix">Coordinator</label>
+              </div>
+
+              <div class="input-field col s12">
+                <i class="material-icons prefix">person_pin</i>
+                <input disabled id="icon_rp" type="text" class="validate" value="{{ representative.name }}">
+                <label class="active" for="icon_rp">Representante</label>
+              </div>
+
+              <div class="input-field col s4 offset-s2">
+                <input disabled type="number" class="validate" id="icon_quantity" min="1" max="15" value="{{ quantity }}">
+                <label class="active" for="icon_quantity"># People</label>
+                </input>
+              </div>
+
+              <div class="input-field col s6">
+                <input disabled type="date" class="datepicker" id="date" value="{{ date }}">
+                <label class="active" for="date" class="">Date</label>
+              </div>
+
+              {{ammountDisplayHelper this}}
+
+              <div class="row">
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">message</i>
+                  <textarea disabled id="comment-textarea" class="materialize-textarea" value="{{ comment }}"></textarea>
+                  <label class="active" for="comment-textarea">Comment</label>
+                </div>
+              </div>
+
+              <div class="btn waves-effect waves-light red delete-btn" type="submit" name="action" data-service-id="{{ id }}">Delete
+                <i class="material-icons right">send</i>
+              </div>
+          </div>
+        </form>
+       </div>
+     </div>
+ </li>
+</script>
+
+<script id="create-service-li-tpl" type="text/template">
+  <li>
+   <div class="collapsible-header truncate collapse-btn"><i class="material-icons add-service-icon">library_add</i>{{ number }}</div>
+   <div class="collapsible-body">
+     <form class="col s11">
+       <div class="row">
+
+         <div class="input-field col s11">
+           <i class="material-icons prefix">account_circle</i>
+           <input id="client-name" type="text" class="validate">
+           <label for="client-name">Client Name</label>
+         </div>
+
+         <div class="input-field col s6">
+           <i class="material-icons prefix">supervisor_account</i>
+           <input type="number" class="validate" id="quantity" min="1" data-error="Numbers only">
+             <label for="quantity"># People</label>
+           </input>
+         </div>
+
+         <div class="row">
+           <div class="input-field col s11">
+           <i class="material-icons prefix">message</i>
+             <textarea id="comment" class="materialize-textarea"></textarea>
+             <label for="comment">Comment</label>
+           </div>
+         </div>
+
+         <input id="table-id"type="hidden" value="{{ id }}">
+
+         <div class="btn waves-effect waves-light service-submit" >Submit
+           <i class="material-icons right">send</i>
+         </div>
+
+       </div>
+     </form>
+   </div>
+ </li>
+</script>
+
+<script id="user-list-tpl" type="text/template">
+  <ul class="collection with-header">
+      <li class="collection-header"><h4>{{ credentials }}</h4></li>
+      {{#each users}}
+        <a href="#administrator/super/users/{{ id }}" class="collection-item" data-user-id="">{{ name }}</a>
+      {{/each}}
+  </ul>
+</script>
+
+<script id="superAdministrator-menu-tpl" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="#administrator" class="breadcrumb">Reservations</a>
+        <a href="#administrator/super" class="breadcrumb">Users</a>
+      </div>
+    </div>
+    <div class="progress hidden">
+      <div class="indeterminate"></div>
+    </div>
+  </nav>
+
+  <div class="administratorsList"></div>
+  <div class="coordinatorsList"></div>
+
+  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a href="#administrator/super/users/new"class="btn-floating btn-large red">
+      <i class="large material-icons">add</i>
+    </a>
+  </div>
+</script>
+
+<script id="show-user-tpl" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="#administrator/super" class="breadcrumb">Users</a>
+        <a href="#administrator/super/users/{{ id }}" class="breadcrumb">{{ name }}</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrapper">
+    <div class="card">
+
+      <div class="card-content">
+        <span class="card-title capitalize">{{ credentials }}</span>
+        <p>{{ name }}</p>
+        <p>{{ email }}</p>
+      </div>
+
+      <div class="card-content" style="text-align:left;">
+        <p>Created Services<span class="secondary-content" style="float:right"> {{servicesCounter coordinated_services}} </span></p>
+        <hr style="border:1px solid white;">
+        <p>Accepted Services<span class="secondary-content" style="float:right"> {{servicesCounter administered_services}} </span></p>
+      </div>
+
+      <div class="card-content" style="text-align:left;">
+        <p>Last Log in <span class="secondary-content" style="float:right"> {{dateHelper last_sign_in_at }} </span></p>
+      </div>
+
+      <div class="card-action">
+        <a href="#users/{{ id }}/edit">Edit</a>
+        <a href="#administrator/super/users/{{ id }}" class="delete-btn", data-user-id="{{ id }}">Delete</a>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title capitalize">Created Services</span>
+         <ul class="collection" style="text-align:left">
+          {{#each coordinated_services}}
+            <li class="collection-item">{{ client }} <div href="#!" class="secondary-content">$ {{ ammount }}</div></li>
+          {{/each}}
+         </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title capitalize">Accepted Services</span>
+         <ul class="collection" style="text-align:left">
+          {{#each administered_services}}
+            <li class="collection-item">{{ client }} <div href="#!" class="secondary-content">$ {{ ammount }}</div></li>
+          {{/each}}
+         </ul>
+      </div>
+    </div>
+
+  </div>
+</script>
+
+<script id="create-user-tpl" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="#administrator/super" class="breadcrumb">Users</a>
+        <a href="#administrator/super/users/create" class="breadcrumb">Create User</a>
+      </div>
+    </div>
+    <div class="progress hidden">
+      <div class="indeterminate"></div>
+    </div>
+  </nav>
+
+ <div class="row">
+    <form class="col s12">
+      <div class="row">          
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">account_circle</i>
+          <input id="user-name" type="text" class="validate">
+          <label for="user-name">Name</label>
+        </div>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input id="email" type="email" class="validate" data-error="Not a valid Email">
+          <label for="email">email</label>
+        </div>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input id="password" type="password" class="validate">
+          <label for="password">Password</label>
+        </div>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock_outline</i>
+          <input id="password-confirmation" type="password" class="validate">
+          <label for="password-confirmation">Password Confirmation</label>
+        </div>
+
+          <p>
+            <input name="credentials" type="radio" id="administrator-radio" value="administrator"/>
+            <label for="administrator-radio">Administrator</label>
+          </p>
+          <p>
+            <input name="credentials" type="radio" id="coordinator-radio" value="coordinator"/>
+            <label for="coordinator-radio">Coordinator</label>
+          </p>
+        
+    </form>
+
+        <div class="submit-btn btn waves-effect waves-light" >Submit
+          <i class="material-icons right">send</i>
+        </div>
+  </div>
+</script>
+
+<script id="update-user-tpl" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        {{#if isAdmin}}
+          <a href="#administrator" class="breadcrumb">Menu</a>
+        {{else}}
+          <a href="#reservations" class="breadcrumb">Reservations</a>
+        {{/if}}
+        <a href="#users/{{id}}/edit" class="breadcrumb">Edit</a>
+      </div>
+    </div>
+    <div class="progress hidden">
+      <div class="indeterminate"></div>
+    </div>
+  </nav>
+
+  <div class="wrapper">
+
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">General</span>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">account_circle</i>
+          <input id="user-name" type="text" class="validate" value="{{name}}">
+          <label class="active" for="user-name">name</label>
+        </div>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input id="email" type="text" class="validate" value="{{email}}">
+          <label class="active" for="email">email</label>
+        </div>
+      </div>
+
+      <div class="card-action">
+        <a href="#users/{{id}}/edit" class="update-info-btn">Update Information</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">Password</span>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input id="password" type="password" class="validate">
+          <label for="password">Password</label>
+        </div>
+
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock_outline</i>
+          <input id="password-confirmation" type="password" class="validate">
+          <label for="password-confirmation">Password Confirmation</label>
+        </div>
+      </div>
+
+      <div class="card-action">
+        <a href="#users/{{id}}/edit" class="update-password-btn">Update Password</a>
+      </div>
+    </div>
+
+    {{#if selfUpdate}}
+    {{else}}
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Credentials</span>
+            <div class="row">
+              <input name="credentials" type="radio" id="administrator-radio" value="administrator"/>
+              <label class="active" for="administrator-radio">Administrator</label>
+              <input name="credentials" type="radio" id="coordinator-radio" value="coordinator"/>
+              <label class="active" for="coordinator-radio">Coordinator</label>
+            </div>
+
+        <div class="card-action">
+          <a href="#users/{{id}}/edit" class="update-cred-btn">Update Credentials</a>
+        </div>
+      </div>
+    {{/if}}
+
+  </div>
+</script>
+
+<script id="representatives-list-view" type="text/template">
+  <ul class="collection">
+      {{#each this}}
+        <li class="collection-item" data-representative-id="{{ id }}"><a href="#representatives">{{ name }}</a></li>
+      {{/each}}
+  </ul>
+</script>
+
+<script id="representatives-view" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="#reservations" class="breadcrumb">Reservations</a>
+        <a href="#representatives" class="breadcrumb">Representatives</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content"></div>
+  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a href="#representatives" class="btn-floating btn-large red add-rep-btn">
+      <i class="large material-icons">add</i>
+    </a>
+  </div>
+
+  <!--Representative Modal  -->
+  <div id="add-rep-modal" class="modal">
+    <div class="modal-content">
+      <h4>New Representative</h4>
+      <div class="input-field">
+        <i class="material-icons prefix">account_circle</i>
+        <input id="representative-name" type="text" class="validate">
+        <label for="representative-name">Representative Name</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#representatives" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+      <a href="#representatives" class=" modal-action modal-close waves-effect waves-green btn-flat confirm-btn">Create</a>
+    </div>
+  </div>
+</script>
+
+<script id="map-view" type="text/template">
+  <div class="mapCanvas"></div>
+</script>
+
+<script id="big-map-view" type="text/template">
+  <nav>
+    <div class="nav-wrapper">
+      <div class="col s12">
+        <a href="#administrator" class="breadcrumb">Reservations</a>
+        <a href="#administrator/map" class="breadcrumb">Map</a>
+      </div>
+    </div>
+    
+    <div class="progress hidden">
+      <div class="indeterminate"></div>
+    </div>
+  </nav>
+
+  <input type="date" class="datepicker">
+  
+
+  <div class="content"></div>
+</script>
+
+<script id="chart-tpl" type="text/template">
+  <canvas id="canvas"/>
+</script>
+
+<script id="finance-tpl" type="text/template">
+  <nav>
+    <ul id="slide-out" class="side-nav">
+      <li><a href="#administrator">Reservations</a></li>
+      <li><a href="#users/{{id}}/edit">Account</a></li>
+      {{#if credentials.isSuper}}
+        <li><a href="#administrator/super">Users</a></li>
+      {{/if}}
+      <li><a href="#">Log Out</a></li>
+    </ul>
+
+    <div class="nav-wrapper" id="finance-nav-wrapper">
+      <a href="#administrator/super/finance" class="brand-logo">Finance</a>
+          <a href="#administrator/super/finance" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a
+    </div>
+  </nav>
+  <div class="progress">
+    <div class="indeterminate"></div>
+  </div>
+  
+  <ul class="tabs" id="finance-tab">
+    <li class="tab col s3" data-tab-id="DailyTab" data-scope="day"><a id="day-a" data-scope="day">Daily</a></li>
+    <li class="tab col s3" data-tab-id="WeeklyTab" data-scope="week"><a id="week-a" data-scope="week">Weekly</a></li>
+    <li class="tab col s3" data-tab-id="MonthlyTab"data-scope="month"><a id="month-a" data-scope="month">Monthly</a></li>
+  </ul>
+
+
+  <input type="date" class="datepicker">
+
+  <div class="row finance-headers">
+    <h5 class="center-align blue-gray semi-thin">$ {{numberWithCommas totalAmmount}}</h5>
+    <div class="row">
+      <div class="center-align semi-thin subtext uppercase">Earnings</div>
+      <div class="row">
+        <h5 class="col s5 blue-gray center-align semi-thin">{{numberWithCommas total}}</h5>
+        <h5 class="col s5 offset-s2 blue-gray center-align semi-thin">{{numberWithCommas missingAmmount}}</h5>
+        <div class="row no-marign-botton">
+          <div class="col s5 center-align semi-thin subtext uppercase">Tables Served</div>
+          <div class="col s5 offset-s2 center-align semi-thin subtext uppercase">Incomplete</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="chartContent"></div>
+
+  
+  <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a href="#administrator/super/finance" class="btn-floating btn-large green" id="user-finance-btn">
+      <i id="user-finance-btn-icon" class="large material-icons">supervisor_account</i>
+    </a>
+  </div>
+
+  <div id="userList" class="hidden"></div>
+  <div id="tableList" class="container">
+    {{#each tables}}
+      <div class="row pseudo-table">
+        <div class="col s6 blue-gray thin left-align"> {{ number }} </div>
+        <div class="col s6 blue-gray normal-weight right-align">$ {{numberWithCommas totalAmmount }} </div>
+      </div>
+    {{/each}}
+  </div>
+</script>
+
+<script id="user-finance-tpl" type="text/template">
+  <nav>
+    <ul id="slide-out" class="side-nav">
+      <li><a href="#administrator">Reservations</a></li>
+      <li><a href="#users/{{id}}/edit">Account</a></li>
+      {{#if credentials.isSuper}}
+        <li><a href="#administrator/super">Users</a></li>
+      {{/if}}
+      <li><a href="#">Log Out</a></li>
+    </ul>
+
+    <div class="nav-wrapper" id="user-finance-nav-wrapper">
+      <a href="#administrator/super/finance/" class="brand-logo">
+          {{ name }}
+          <div class="subtitle">{{date}}</div>
+      </a>
+          <a href="#administrator/super/finance" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
+    </div>
+  </nav>
+
+  <div class="row finance-dashboard">
+    <div class="col s6">
+      <div class="center-align-semi-thin subtext uppercase"> Earnings </div>
+      <h5 class="center-align blue-gray semi-thin">{{numberWithCommas totalAmmount}} <sup>$</sup></h5><br>
+    </div>
+    <div class="col s6">
+        <div class="row">
+          <i class="left tiny material-icons">perm_identity</i> <span class="left dark-blue">${{numberWithCommas selfAmmount}}</span>
+          <div class="progress light-blue lighten-2" style="height:10px;">
+              <div class="light-blue darken-4 determinate" style="width: {{ selfPercent }}%"></div>
+          </div>
+        </div>
+        <div class="row"> 
+          <i class="left tiny material-icons">supervisor_account</i> <span class="left dark-orange">${{numberWithCommas rpAmmount}}</span>
+          <div class="progress yellow darken-4" style="height:10px;">
+              <div class="determinate orange darken-4" style="width: {{ rpPercent }}%"></div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="container">
+      <ul class="collapsible popout" data-collapsible="expandable">
+          {{#each repArray}} 
+            <li>
+              <div class="grey lighten-2 finance-rp collapsible-header active">{{name}}<span class="right" style="font-weight: 500;">{{totalServices}}/{{completedServices}}&#160;&#160;&#160;${{numberWithCommas totalAmmount}} </span></div>
+              <div class="collapsible-body">
+                {{#each services}}
+                  <div class="service left-align">
+                    <h5 class="row"><strong>{{client}}</strong></h5>
+                    <div class="row">${{ammount}}  
+                      <div class="subtext"><i class="tiny material-icons">query_builder</i>{{elapsedTime}}M</div> 
+                    </div>
+                    <div class="row grayText">{{date}}</div>
+                  </div>
+                  <div class="theme-break"/>
+                {{/each}}
+              </div>
+            </li>
+          {{/each}}
+        </ul>
+  </div>
+</script>
+
+<script id="user-finance-list-tpl" type="text/template">
+  <ul class="collection">
+      {{#each this}}
+        <li class="collection-item user-li" data-user-id="{{id}}"><a href="#administrator/super/finance">{{ name }} <span class="right">${{numberWithCommas totalAmmount}}</span></a></li>
+      {{/each}}
+  </ul>
+</script>
+
+
+
+
+
+<script src="cordova.js"></script>
+<script src="lib/fastclick.js"></script>
+<script src="lib/handlebars.js"></script>
+<script src="lib/jquery.js"></script>
+<script src="lib/pageslider.js"></script>
+<script src="lib/router.js"></script>
+<script src="lib/raphael.js"></script>
+<script src="lib/jquery.mobile.custom/jquery.mobile.custom.min.js"></script>
+<script src="lib/jquery.p2r.min.js"></script>
+<script src="lib/Chart.bundle.js"></script>
+<script src="lib/helpers.js"></script>
+<script src="js/services/Map.js"></script>
+<script src="js/services/events.js"></script>
+<script src="js/services/CommunicationService.js"></script>
+<script src="js/views/LogInView.js"></script>
+<script src="js/views/ReservationsListView.js"></script>
+<script src="js/views/ServicesListView.js"></script>
+<script src="js/views/ReservationsView.js"></script>
+<script src="js/views/CreateReservationView.js"></script>
+<script src="js/views/MapView.js"></script>
+<script src="js/views/BigMapView.js"></script>
+<script src="js/views/TableChooseModalView.js"></script>
+<script src="js/views/AdministratorView.js"></script>
+<script src="js/views/SuperAdministratorView.js"></script>
+<script src="js/views/UserListView.js"></script>
+<script src="js/views/UserView.js"></script>
+<script src="js/views/CreateUserView.js"></script>
+<script src="js/views/UpdateUserView.js"></script>
+<script src="js/views/RepresentativesListView.js"></script>
+<script src="js/views/RepresentativesView.js"></script>
+<script src="js/views/ChartView.js"></script>
+<script src="js/views/UserFinanceList.js"></script>
+<script src="js/views/FinanceView.js"></script>
+<script src="js/views/UserFinanceView.js"></script>
+<script src="js/app.js"></script>
+<script type="text/javascript" src="assets/materialize/js/materialize.js"></script>
+<script type="text/javascript" src="assets/moment.js"></script>
+
+</body>
+</html>

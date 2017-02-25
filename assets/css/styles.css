@@ -1,0 +1,318 @@
+/**
+ * A gray color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A grayish-blue color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A blue-gray color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A lime-green color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A soft-cyan color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A dark-cyan color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A soft-red color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A dark-orange color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * A dark-soft-blue color variable.
+ *
+ * @color
+ * @section Global
+ */
+/**
+ * Adds a left-right gradient to the element
+ * 
+ * @mixin
+ * @section Style Mixins
+ * @param $start-color The color displayed initially
+ * @param $end-color The ending color of the gradient
+ * @example
+ *   @include linear-gradient-left-top(red, blue);
+ */
+/* line 1, ../sass/partials/_base.scss */
+body {
+  overflow: auto !important;
+}
+
+/* line 5, ../sass/partials/_base.scss */
+.hidden {
+  display: none;
+}
+
+/* line 10, ../sass/partials/_base.scss */
+.dark-blue {
+  color: #01579b;
+}
+
+/* line 14, ../sass/partials/_base.scss */
+.dark-orange {
+  color: #e65100;
+}
+
+/* line 18, ../sass/partials/_base.scss */
+.blue-gray {
+  color: #315e83;
+}
+
+/* line 22, ../sass/partials/_base.scss */
+.grayText {
+  color: #b9b9b9;
+}
+
+/* line 26, ../sass/partials/_base.scss */
+.no-marign-botton {
+  margin-bottom: 0px;
+}
+
+/* line 32, ../sass/partials/_base.scss */
+.thin {
+  font-weight: 100;
+}
+
+/* line 36, ../sass/partials/_base.scss */
+.semi-thin {
+  font-weight: 300;
+}
+
+/* line 40, ../sass/partials/_base.scss */
+.normal-weight {
+  font-weight: 500;
+}
+
+/* line 45, ../sass/partials/_base.scss */
+.subtext {
+  font-size: 0.6em;
+  color: #a2bacc;
+}
+
+/* line 50, ../sass/partials/_base.scss */
+.uppercase {
+  text-transform: uppercase;
+}
+
+/* line 54, ../sass/partials/_base.scss */
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* line 8, ../sass/styles.scss */
+.finance-rp {
+  color: #868686;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+/* line 13, ../sass/styles.scss */
+.theme-break {
+  border-bottom: 1px solid #dfdfdf;
+  margin-left: 10%;
+}
+/* line 16, ../sass/styles.scss */
+.theme-break:last-child {
+  display: none;
+}
+
+/* line 21, ../sass/styles.scss */
+.service {
+  padding: 2% 5%;
+}
+/* line 23, ../sass/styles.scss */
+.service .subtext {
+  display: inline;
+  margin-left: 2em;
+}
+/* line 27, ../sass/styles.scss */
+.service .row {
+  margin-left: 0px !important;
+}
+
+/* line 32, ../sass/styles.scss */
+.finance-dashboard {
+  padding-top: 1.5em;
+}
+
+/* line 37, ../sass/styles.scss */
+.subtitle {
+  margin-top: -4.6em;
+  color: white;
+  font-size: 0.3em;
+}
+
+/* line 43, ../sass/styles.scss */
+.pseudo-table {
+  border-bottom: 1px solid white;
+  margin-bottom: 1%;
+  font-size: 1.1em;
+}
+
+/* line 49, ../sass/styles.scss */
+.finance-headers {
+  margin-bottom: 0px;
+}
+
+/* line 52, ../sass/styles.scss */
+#finance-nav-wrapper {
+  background: #46e3c5;
+}
+
+/* line 56, ../sass/styles.scss */
+#finance-tab {
+  background: #72ead3;
+  /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left top, #72ead3, #aff2d6);
+  /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(bottom right, #72ead3, #aff2d6);
+  /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(bottom right, #72ead3, #aff2d6);
+  /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to bottom right, #72ead3, #aff2d6);
+  /* Standard syntax (must be last) */
+}
+/* line 58, ../sass/styles.scss */
+#finance-tab a {
+  color: green;
+}
+/* line 59, ../sass/styles.scss */
+#finance-tab .indicator {
+  display: none;
+}
+/* line 60, ../sass/styles.scss */
+#finance-tab .active {
+  font-weight: bold;
+  border-bottom: 2px solid green;
+}
+
+/* line 66, ../sass/styles.scss */
+input {
+  color: black !important;
+}
+
+/* line 70, ../sass/styles.scss */
+.mapCanvas {
+  display: block;
+  border: 1px solid #868686;
+  margin: 3%;
+  width: 95vw;
+  height: 95vh;
+  background: white;
+}
+
+/* line 79, ../sass/styles.scss */
+.separator {
+  margin: 5px;
+  width: 1px;
+  height: 1px;
+}
+
+/* line 85, ../sass/styles.scss */
+.table_number {
+  float: right;
+  margin-right: 5%;
+}
+
+/* line 90, ../sass/styles.scss */
+.page.transition.center {
+  background-color: white;
+}
+
+/* line 94, ../sass/styles.scss */
+ul.collection {
+  text-align: left;
+}
+
+/* line 98, ../sass/styles.scss */
+.datepicker {
+  text-align: center;
+}
+
+/* line 102, ../sass/styles.scss */
+.collapsible-header {
+  text-align: left;
+}
+/* line 104, ../sass/styles.scss */
+.collapsible-header i {
+  float: right;
+}
+/* line 108, ../sass/styles.scss */
+.collapsible-header:active {
+  background-color: #26A69A;
+  color: white;
+  transition: all 0.3s;
+}
+
+/* line 115, ../sass/styles.scss */
+.progress {
+  margin: 0;
+}
+
+/* line 119, ../sass/styles.scss */
+.collapse-btn {
+  background-color: #26A69A;
+  color: white;
+}
+
+/* line 124, ../sass/styles.scss */
+.finished {
+  background-color: #c6c6c6;
+}
+
+/* line 128, ../sass/styles.scss */
+.header {
+  text-transform: capitalize;
+  color: #ee6e73;
+  font-weight: 300;
+}
+
+/* line 135, ../sass/styles.scss */
+.wrapper {
+  padding: 0 10px;
+}
+
+/* line 140, ../sass/styles.scss */
+.card-content:not(:first-child) {
+  border-top: 1px solid #ececec;
+}
+
+/* line 145, ../sass/styles.scss */
+.picker {
+  position: fixed;
+  z-index: 10000;
+}
+
+/* line 150, ../sass/styles.scss */
+div.ui-datepicker {
+  font-size: 7px;
+}

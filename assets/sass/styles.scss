@@ -1,0 +1,152 @@
+@import "compass";
+@import "partials/variables";
+@import "partials/normalize";
+@import "partials/mixins";
+@import "partials/base";
+@import "compass/css3";
+
+.finance-rp {
+	color: $gray;
+	text-transform: uppercase;
+	font-weight: 300;
+}
+.theme-break {
+	border-bottom: 1px solid lighten($gray, 35%);
+	margin-left: 10%;
+	&:last-child {
+		display:none;
+	}
+}
+
+.service {
+	padding: 2% 5%;
+	.subtext {
+		display: inline;
+		margin-left: 2em;
+	}
+	.row {
+		margin-left: 0px !important
+	}
+}
+
+.finance-dashboard {
+	padding-top: 1.5em;
+
+}
+
+.subtitle {
+	margin-top: -4.6em;
+	color: white;
+	font-size: 0.3em;
+}
+
+.pseudo-table {
+	border-bottom: 1px solid white;
+	margin-bottom: 1%;
+	font-size: 1.1em;
+}
+
+.finance-headers {
+	margin-bottom: 0px;
+}
+#finance-nav-wrapper {
+	background: $soft-cyan;
+}
+
+#finance-tab {
+	@include linear-gradient-left-top(lighten($soft-cyan, 10%), $lime-green);
+	a { color: green; }
+	.indicator { display: none; }
+	.active {
+		font-weight: bold;
+		border-bottom: 2px solid green;		
+	}
+}
+
+input {
+	color:black !important;
+}
+
+.mapCanvas {
+    display: block;
+	border: 1px solid $gray;
+	margin: 3%;
+	width: 95vw;
+	height: 95vh;
+	background: white;
+}
+
+.separator {
+	margin: 5px;
+	width: 1px;
+	height: 1px;
+}
+
+.table_number {
+	float: right;
+	margin-right: 5%;
+}
+
+.page.transition.center {
+	background-color: lighten($gray, 50%);
+}
+
+ul.collection {
+	text-align: left;
+}
+
+.datepicker {
+    text-align: center;
+}
+
+.collapsible-header {
+	text-align:left;
+	i {
+		float: right;
+	}
+
+	&:active {
+		background-color: $dark-cyan;
+		color: white;
+		transition: all 0.3s;
+	}
+}
+
+.progress {
+	margin: 0;
+}
+
+.collapse-btn {
+	background-color: $dark-cyan;
+	color: white;
+}
+
+.finished {
+	background-color: lighten($gray, 25%);
+}
+
+.header {
+	text-transform: capitalize;
+	color: $soft-red;
+    font-weight: 300;
+}
+
+
+.wrapper {
+	padding: 0 10px;
+}
+
+.card-content {
+    &:not(:first-child) {
+    	border-top: 1px solid lighten($gray, 40%);
+    }
+}
+
+.picker {
+  position: fixed ;
+  z-index: 10000 ;
+}
+
+div.ui-datepicker{
+ font-size: 7px;
+}

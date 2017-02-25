@@ -1,0 +1,17 @@
+/**
+ * Adds a left-right gradient to the element
+ * 
+ * @mixin
+ * @section Style Mixins
+ * @param $start-color The color displayed initially
+ * @param $end-color The ending color of the gradient
+ * @example
+ *   @include linear-gradient-left-top(red, blue);
+ */
+@mixin linear-gradient-left-top($start-color, $end-color) {
+	background: $start-color; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left top, $start-color, $end-color); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(bottom right, $start-color, $end-color); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(bottom right, $start-color, $end-color); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to bottom right, $start-color, $end-color); /* Standard syntax (must be last) */
+}

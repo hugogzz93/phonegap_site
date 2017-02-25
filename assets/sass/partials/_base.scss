@@ -1,0 +1,56 @@
+body {
+    overflow: auto !important; 
+}
+
+.hidden {
+	display: none;
+}
+
+// Text-Colors
+.dark-blue {
+	color: $dark-blue;
+}
+
+.dark-orange {
+	color: $dark-orange;
+}
+
+.blue-gray{
+	color: $blue-gray;
+}
+
+.grayText { 
+	color: lighten($gray, 20%);
+}
+
+.no-marign-botton {
+	margin-bottom: 0px;
+}
+
+// Font weights
+
+.thin {
+	font-weight: 100;
+}
+
+.semi-thin {
+	font-weight: 300;
+}
+
+.normal-weight {
+	font-weight: 500;
+}
+
+// Text Transformations
+.subtext {
+	font-size: 0.6em;
+	color: $grayish-blue;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.capitalize {
+	text-transform: capitalize;
+}
